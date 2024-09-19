@@ -46,7 +46,6 @@ public class User {
                     if (userId == id) {
                         String username = fields.get(0);
                         String password = fields.get(1);
-                        char group = fields.get(2).charAt(0);
                         return new User(username, password, id);
                     }
                 }
@@ -58,10 +57,8 @@ public class User {
     }
 
     public static List<String> parseCSVLine(String line) {
-        List<String> result = new ArrayList<>();
         String[] items = line.split(",");
-        result.addAll(Arrays.asList(items));
-        return result;
+        return new ArrayList<>(Arrays.asList(items));
     }
 
     public static User login(String a, String b) {
@@ -73,10 +70,10 @@ public class User {
 
             while ((line = reader.readLine()) != null) {
                 String[] fields = parseCSVLine(line).toArray(new String[0]);
-                if (fields.length >= 4) {
+                if (fields.length >= 3) {
                     String username = fields[0];
                     String password = fields[1];
-                    int id = Integer.parseInt(fields[3]);
+                    int id = Integer.parseInt(fields[2]);
                     if (username.equals(a) && password.equals(encrypt(b))) {
                         return new User(username, password, id);
                     }
@@ -113,7 +110,7 @@ public class User {
             int id = findid(filename);
 
             try (FileWriter writer = new FileWriter(file, true)) {
-                writer.write(a + "," + b + ",s," + id + "\n");
+                writer.write(a + "," + b + "," + id + "\n");
             }
             return true;
         } catch (IOException e) {
