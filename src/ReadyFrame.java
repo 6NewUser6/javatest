@@ -24,11 +24,13 @@ public class ReadyFrame extends JFrame {
 
         // 左上角显示用户名
         JLabel usernameLabel = new JLabel("欢迎"+username);
+        usernameLabel.setForeground(Color.red);
         usernameLabel.setBounds(10, 10, 150, 20); // 设置位置和大小
         contentPane.add(usernameLabel);
 
         // 上半部分中间显示 "一起打飞机"
         JLabel titleLabel = new JLabel("一起打飞机");
+        titleLabel.setForeground(Color.red);
         titleLabel.setFont(titleLabel.getFont().deriveFont(52f));
         titleLabel.setBounds(150, 30, 300, 80); // 设置位置和大小
         contentPane.add(titleLabel);
@@ -56,20 +58,20 @@ public class ReadyFrame extends JFrame {
 
         // 设置按钮的首选大小、最大大小和最小大小
         startGameButton.setPreferredSize(buttonSize);
-        startGameButton.setMaximumSize(buttonSize);
-        startGameButton.setMinimumSize(buttonSize);
+        startGameButton.setOpaque(false);
+        startGameButton.setBorderPainted(false);
 
         historyButton.setPreferredSize(buttonSize);
-        historyButton.setMaximumSize(buttonSize);
-        historyButton.setMinimumSize(buttonSize);
+        historyButton.setOpaque(false);
+        historyButton.setBorderPainted(false);
 
         selectPlaneButton.setPreferredSize(buttonSize);
-        selectPlaneButton.setMaximumSize(buttonSize);
-        selectPlaneButton.setMinimumSize(buttonSize);
+        selectPlaneButton.setOpaque(false);
+        selectPlaneButton.setBorderPainted(false);
 
         newPlayerButton.setPreferredSize(buttonSize);
-        newPlayerButton.setMaximumSize(buttonSize);
-        newPlayerButton.setMinimumSize(buttonSize);
+        newPlayerButton.setOpaque(false);
+        newPlayerButton.setBorderPainted(false);
 
         // 将按钮添加到按钮面板，并在每个按钮之间添加 10 像素的间隔
         buttonPanel.add(startGameButton);
@@ -94,7 +96,7 @@ public class ReadyFrame extends JFrame {
                 g.fillRect(0, 0, getWidth(), getHeight());
 
                 // 设置背景图片
-                ImageIcon backgroundImage = new ImageIcon("background.jpg");
+                ImageIcon backgroundImage = new ImageIcon("./resources/background.png");
                 g.drawImage(backgroundImage.getImage(), 0, 0, getWidth(), getHeight(), null);
             }
         };
