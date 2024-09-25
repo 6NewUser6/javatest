@@ -24,6 +24,5 @@ bin/
 "users.csv"
 ### VS Code ###
 .vscode/
-
 ### Mac OS ###
 .DS_Store

@@ -11,6 +11,7 @@ public class mainIo {
             frame.add(panel);
             placeComponents(panel);
             frame.setVisible(true);
+            frame.setLocationRelativeTo(null);
         }
 
         private static void placeComponents(JPanel panel) {
@@ -39,8 +40,12 @@ public class mainIo {
                     if (u.getId() ==0) {
                         JOptionPane.showMessageDialog(null, "你的密码或账号有误");
                     }
-                    else{
-                        JOptionPane.showMessageDialog(null, u.getName()+" "+u.getPassword());
+                    else{//进入游戏
+                        ((JFrame) panel.getTopLevelAncestor()).dispose();
+                        SwingUtilities.invokeLater(() -> {
+                            ReadyFrame frame = new ReadyFrame(user);
+                            frame.setVisible(true);
+                        });
                     }
                 }
             });
