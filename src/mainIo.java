@@ -43,7 +43,7 @@ public class mainIo {
                     else{//进入游戏
                         ((JFrame) panel.getTopLevelAncestor()).dispose();
                         SwingUtilities.invokeLater(() -> {
-                            ReadyFrame frame = new ReadyFrame(user);
+                            ReadyFrame frame = new ReadyFrame(u);
                             frame.setVisible(true);
                         });
                     }

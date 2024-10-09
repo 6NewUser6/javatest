@@ -1,8 +1,14 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class ReadyFrame extends JFrame {
-    public ReadyFrame(String username) {
+    public ReadyFrame(User user) {
         // 设置窗口标题
         setTitle("一起打飞机");
 
@@ -23,17 +29,43 @@ public class ReadyFrame extends JFrame {
         setContentPane(contentPane);
 
         // 左上角显示用户名
-        JLabel usernameLabel = new JLabel("欢迎"+username);
+        JLabel usernameLabel = new JLabel("欢迎"+user.getName());
         usernameLabel.setForeground(Color.red);
         usernameLabel.setBounds(10, 10, 150, 20); // 设置位置和大小
         contentPane.add(usernameLabel);
 
         // 上半部分中间显示 "一起打飞机"
-        JLabel titleLabel = new JLabel("一起打飞机");
-        titleLabel.setForeground(Color.red);
-        titleLabel.setFont(titleLabel.getFont().deriveFont(52f));
-        titleLabel.setBounds(150, 30, 300, 80); // 设置位置和大小
-        contentPane.add(titleLabel);
+        try {
+            // 读取原始图片
+            BufferedImage originalImage = ImageIO.read(new File("./resources/title.png"));
+
+            // 计算目标大小，保持原始比例
+            int targetWidth = 220;
+            int targetHeight = 106;
+            int originalWidth = originalImage.getWidth();
+            int originalHeight = originalImage.getHeight();
+
+            // 计算缩放比例
+            double widthRatio = (double) targetWidth / originalWidth;
+            double heightRatio = (double) targetHeight / originalHeight;
+            double ratio = Math.min(widthRatio, heightRatio);
+
+            // 计算缩放后的尺寸
+            int scaledWidth = (int) (originalWidth * ratio);
+            int scaledHeight = (int) (originalHeight * ratio);
+
+            // 创建缩放后的图片
+            Image scaledImage = originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+
+            // 创建 ImageIcon 并设置到 JLabel
+            ImageIcon titleIcon = new ImageIcon(scaledImage);
+            JLabel titleLabel = new JLabel(titleIcon);
+            titleLabel.setBounds(200, 30, scaledWidth, scaledHeight); // 设置位置和大小
+            contentPane.add(titleLabel);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 //        // 右上角更换背景按钮
 //        JButton changeBackgroundButton = new JButton("更换背景");
@@ -46,7 +78,7 @@ public class ReadyFrame extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-        buttonPanel.setBounds(225, 150, 300, 200); // 设置位置和大小
+        buttonPanel.setBounds(225, 150, 200, 200); // 设置位置和大小
         contentPane.add(buttonPanel);
 
         // 创建四个按钮
@@ -56,22 +88,17 @@ public class ReadyFrame extends JFrame {
         JButton selectPlaneButton = new JButton("选择飞机");
         JButton newPlayerButton = new JButton("新手提示");
 
-        // 设置按钮的首选大小、最大大小和最小大小
-        startGameButton.setPreferredSize(buttonSize);
-        startGameButton.setOpaque(false);
-        startGameButton.setBorderPainted(false);
+        startGameButton.setMaximumSize(buttonSize);
+        startGameButton.setMinimumSize(buttonSize);
 
-        historyButton.setPreferredSize(buttonSize);
-        historyButton.setOpaque(false);
-        historyButton.setBorderPainted(false);
+        historyButton.setMaximumSize(buttonSize);
+        historyButton.setMinimumSize(buttonSize);
 
-        selectPlaneButton.setPreferredSize(buttonSize);
-        selectPlaneButton.setOpaque(false);
-        selectPlaneButton.setBorderPainted(false);
+        selectPlaneButton.setMaximumSize(buttonSize);
+        selectPlaneButton.setMinimumSize(buttonSize);
 
-        newPlayerButton.setPreferredSize(buttonSize);
-        newPlayerButton.setOpaque(false);
-        newPlayerButton.setBorderPainted(false);
+        newPlayerButton.setMaximumSize(buttonSize);
+        newPlayerButton.setMinimumSize(buttonSize);
 
         // 将按钮添加到按钮面板，并在每个按钮之间添加 10 像素的间隔
         buttonPanel.add(startGameButton);
@@ -81,7 +108,16 @@ public class ReadyFrame extends JFrame {
         buttonPanel.add(selectPlaneButton);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(newPlayerButton);
-
+        startGameButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                // 打开新的 Main_play 窗口
+                SwingUtilities.invokeLater(() -> {
+                    Main_play mainPlayFrame = new Main_play(user);
+                    mainPlayFrame.setVisible(true);
+                });
+            }
+        });
         // 设置窗口可见
         setVisible(true);
     }
@@ -109,7 +145,7 @@ public class ReadyFrame extends JFrame {
     public static void main(String[] args) {
         // 在事件调度线程上创建并显示窗口
         SwingUtilities.invokeLater(() -> {
-            new ReadyFrame("游客10086");
+            new ReadyFrame(new User("游客10086","123456",-1));
         });
     }
 }
