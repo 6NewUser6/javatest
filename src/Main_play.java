@@ -2,9 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
-import java.util.Random;
-import java.util.Scanner;
 
 public class Main_play extends JFrame {
     private final user_plane plane;
@@ -13,17 +13,22 @@ public class Main_play extends JFrame {
     private int a = 400;
     private final JLabel lifeLabel;
     private final JLabel scoreLabel;
+    private final JLabel mygoldLabel;
     private final help helpLabel;
+    private final gold goldLabel;
     private long lastAddNewRayTime = 0;
     private long lastFindPlaneTime = 0;
-    private long lastLifeTime = System.currentTimeMillis()+120000;
+    private long lastLifeTime = System.currentTimeMillis() + 120000;
     private long lastCheckCollisionsTime = 0;
     private long lastMouseMoveTime = 0;
-    private long helpTime=0;
+    private long helpTime = 0;
+    private long goldTime = System.currentTimeMillis() + 1000;
     private int mouseX = 0;
     private int mouseY = 0;
-    public Main_play(User user) {
+    private User user;
+    public Main_play(User user, String file) {
         // 初始化窗口
+        this.user = user;
         setTitle("飞机？boom！");
         setSize(1700, 1200);
         setResizable(false);
@@ -37,7 +42,7 @@ public class Main_play extends JFrame {
         setContentPane(layeredPane);
 
         // 创建一个自定义的 JLabel 并设置其大小为一个圆
-        plane = new user_plane();
+        plane = new user_plane(file);
         plane.setBounds(0, 0, 50, 50); // 设置为与窗口同大小
         setCursor(getToolkit().createCustomCursor(
                 new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB),
@@ -54,39 +59,55 @@ public class Main_play extends JFrame {
         });
 
         // 创建并添加 rayPanel
-        rayPanel = new RayPanel(plane, this,user);
+        rayPanel = new RayPanel(plane, this, user);
         rayPanel.setBounds(0, 0, getWidth(), getHeight()); // 设置 rayPanel 的边界
-        layeredPane.add(rayPanel, JLayeredPane.DEFAULT_LAYER);
+        rayPanel.setVisible(true); // 确保 rayPanel 可见
+        layeredPane.add(rayPanel, Integer.valueOf(1));
         // 将 trackingLabel 添加到 JFrame 的内容面板
-        layeredPane.add(plane, JLayeredPane.DRAG_LAYER);
+        layeredPane.add(plane,Integer.valueOf(5));
 
         // 创建并添加生命值标签
         lifeLabel = new JLabel("生命:5");
         lifeLabel.setBounds(10, 10, 100, 20); // 设置标签的位置和大小
         lifeLabel.setFont(new Font("宋体", Font.PLAIN, 14));
-        layeredPane.add(lifeLabel, JLayeredPane.PALETTE_LAYER);
+        layeredPane.add(lifeLabel, Integer.valueOf(2));
 
         scoreLabel = new JLabel("当前分数:0");
         scoreLabel.setBounds(1500, 10, 150, 20); // 设置标签的位置和大小
         scoreLabel.setFont(new Font("宋体", Font.PLAIN, 16)); // 设置字体
-        layeredPane.add(scoreLabel, JLayeredPane.PALETTE_LAYER);
+        layeredPane.add(scoreLabel, Integer.valueOf(2));
+
+        mygoldLabel = new JLabel("此次获得金币:0");
+        mygoldLabel.setBounds(1500, 50, 150, 20); // 设置标签的位置和大小
+        mygoldLabel.setFont(new Font("宋体", Font.PLAIN, 16)); // 设置字体
+        layeredPane.add(mygoldLabel,Integer.valueOf(2));
+        ImageIcon backgroundImageIcon = new ImageIcon("./resources/mainBackground.jpg");
+        Image backgroundImage = backgroundImageIcon.getImage().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
+        ImageIcon scaledBackgroundImageIcon = new ImageIcon(backgroundImage);
+        JLabel backgroundLabel = new JLabel(scaledBackgroundImageIcon);
+        backgroundLabel.setBounds(0, 0, getWidth(), getHeight());
+        layeredPane.add(backgroundLabel, Integer.valueOf(0));
+
         // 设置窗口可见
         setVisible(true);
         helpLabel = new help(plane);
-        layeredPane.add(helpLabel, JLayeredPane.PALETTE_LAYER);
+        layeredPane.add(helpLabel,Integer.valueOf(2));
         helpLabel.setVisible(false);
-
+        goldLabel = new gold(plane);
+        layeredPane.add(goldLabel, Integer.valueOf(2));
+        goldLabel.setVisible(false);
         // 初始化 Timer，每秒增加一条射线
         timer = new Timer(1, e -> {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastAddNewRayTime >= a) {
                 addNewRay();
+                a=(a>200?(int)Math.round(a*0.99):300);
                 lastAddNewRayTime = currentTime;
             }
 
-            if (currentTime - lastFindPlaneTime >= 400) {
+            if (currentTime - lastFindPlaneTime >= 1000) {
                 findPlane();
-                lastFindPlaneTime = currentTime;
+               lastFindPlaneTime = currentTime;
             }
 
             if (currentTime - lastLifeTime >= 2000) {
@@ -97,43 +118,64 @@ public class Main_play extends JFrame {
             if (currentTime - lastCheckCollisionsTime >= 100) {
                 if (!rayPanel.checkCollisions()) {
                     lastLifeTime = currentTime;
-                };
+                }
                 lastCheckCollisionsTime = currentTime;
                 rayPanel.died();
-
             }
 
             if (currentTime - lastMouseMoveTime >= 2) {
                 updatePlanePosition(mouseX, mouseY);
                 lastMouseMoveTime = currentTime;
             }
-            if (currentTime - helpTime >= 10000 &&currentTime-lastLifeTime>=200) {
+            if (currentTime - helpTime >= 10000 && currentTime - lastLifeTime >= 300) {
                 addHelp();
-                helpTime=currentTime;
+                helpTime = currentTime;
                 helpLabel.justDoIt();
-                System.out.println("justduit");
+            }
+            if (currentTime - goldTime >= 10000) {
+                addGold();
+                goldTime = currentTime;
+                goldLabel.justDoIt(user,this);
+                System.out.println("现在的金币"+user.getGold());
             }
         });
         timer.start();
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onWindowClosing();
+            }
+        });
+    }
+
+    public void updategoldLable() {
+        if (mygoldLabel != null) {
+            mygoldLabel.setText("当前金币：" + user.getGold());
+        }
+    }
+
+    private void onWindowClosing() {
+        System.out.println("窗口即将关闭");
+        user.save();
+        stopTimers(); // 停止所有计时器
     }
 
     private void addHelp() {
         helpLabel.setHelp();
         helpLabel.setVisible(true);
-
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Main_play frame = new Main_play(new User("游客10086","123456",-1));
-            frame.setVisible(true);
-        });
+    private void addGold() {
+        goldLabel.setGold();
+        goldLabel.setVisible(true);
     }
+
+
 
     // 增加一条射线的方法
     public void addNewRay() {
         if (rayPanel != null) {
-            rayPanel.setAddNewRay(true);
+            rayPanel.setAddNewRay();
             rayPanel.repaint();
         }
     }
@@ -175,7 +217,6 @@ public class Main_play extends JFrame {
                 y = 1000;
             }
             plane.setLocation(x, y);
-            rayPanel.setAddNewRay(false); // 不增加新射线
             rayPanel.repaint(); // 手动重绘 rayPanel
         }
     }

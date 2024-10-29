@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class mainIo {
+    //主页面
         public static void reginOrRegistration() {
             JFrame frame = new JFrame("欢迎使用我们的系统");
             frame.setSize(350, 200);
@@ -13,7 +14,7 @@ public class mainIo {
             frame.setVisible(true);
             frame.setLocationRelativeTo(null);
         }
-
+        //加排版
         private static void placeComponents(JPanel panel) {
             //排版
             panel.setLayout(null);
@@ -60,6 +61,7 @@ public class mainIo {
             panel.add(registButton);
 
         }
+        //登录页面
     public static void regist() {
         JFrame registerFrame = new JFrame("Registration");
         registerFrame.setSize(350, 250);
@@ -71,7 +73,7 @@ public class mainIo {
 
         registerFrame.setVisible(true);
     }
-
+    //注册页面
     private static void placeRegisterComponents(JPanel panel) {
         panel.setLayout(null);
 

@@ -7,53 +7,46 @@ public class User {
     private static String username;
     private static String password;
     private static int id;
+    public int[] planes = new int[16]; // 记录飞机是否被购买的列表
+    private static int gold;
+    private String plane = "./resources/plane1.png";
+
     public User() {
-        this("", "", 0);
+        this("", "", 0, 0, "plane1", new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
     }
 
-    public User(String username, String password, int uid) {
+    public User(String username, String password, int uid, int gold, String plane, int[] planes) {
+        Arrays.fill(this.planes, 0);
+        this.planes = planes;
         User.username = username;
         User.password = password;
         id = uid;
+        this.gold = gold;
+        this.plane = plane;
     }
+
+    public void setPlane(String plane) {
+        this.plane = plane;
+    }
+
     public String getName() {
         return username;
     }
+
     public void setName(String name) {
         User.username = name;
     }
+
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         User.password = password;
     }
+
     public int getId() {
         return id;
-    }
-    public static User findUser(int id) {
-        User user = new User();
-        String filename = "users.csv";
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            // 跳过第一行
-            reader.readLine();
-
-            while ((line = reader.readLine()) != null) {
-                List<String> fields = parseCSVLine(line);
-                if (fields.size() >= 4) {
-                    int userId = Integer.parseInt(fields.get(3));
-                    if (userId == id) {
-                        String username = fields.get(0);
-                        String password = fields.get(1);
-                        return new User(username, password, id);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("无法打开文件: " + filename);
-        }
-        return user;
     }
 
     public static List<String> parseCSVLine(String line) {
@@ -70,12 +63,18 @@ public class User {
 
             while ((line = reader.readLine()) != null) {
                 String[] fields = parseCSVLine(line).toArray(new String[0]);
-                if (fields.length >= 3) {
+                if (fields.length >= 6) {
                     String username = fields[0];
                     String password = fields[1];
                     int id = Integer.parseInt(fields[2]);
+                    int gold = Integer.parseInt(fields[3]);
+                    String plane = "./resources/" + fields[4] + ".png";
+                    int[] planes = new int[16];
+                    for (int i = 0; i < 16; i++) {
+                        planes[i] = Integer.parseInt(fields[5].charAt(i)+"");
+                    }
                     if (username.equals(a) && password.equals(encrypt(b))) {
-                        return new User(username, password, id);
+                        return new User(username, password, id, gold, plane, planes);
                     }
                 }
             }
@@ -110,7 +109,7 @@ public class User {
             int id = findid(filename);
 
             try (FileWriter writer = new FileWriter(file, true)) {
-                writer.write(a + "," + b + "," + id + "\n");
+                writer.write(a + "," + b + "," + id +",0,plane1,1000000000000000" + "\n");
             }
             return true;
         } catch (IOException e) {
@@ -168,5 +167,68 @@ public class User {
 
     private static String encrypt(String input) {
         return input;
+    }
+
+    public static void saveAll() {
+        // 保存用户数据到文件
+    }
+
+    public void gold() {
+        gold += 10;
+    }
+
+    public int getGold() {
+        return gold;
+    }
+
+    public void setGold(int gold) {
+        this.gold = gold;
+    }
+
+    public String getPlane() {
+        return plane;
+    }
+
+    public boolean hasPurchased(int planeIndex) {
+        return planes[planeIndex] == 1;
+    }
+
+    public void purchasePlane(int planeIndex) {
+        planes[planeIndex] = 1;
+    }
+
+    public int[] getPlanes() {
+        return planes;
+    }
+
+    public void save() {
+        String filename = "users.csv";
+        List<String> lines = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            for (String line : lines) {
+                String[] fields = parseCSVLine(line).toArray(new String[0]);
+                if (fields.length >= 3 && fields[0].equals(username) && fields[1].equals(password) && Integer.parseInt(fields[2]) == id) {
+                    // 更新当前用户的数据
+                    String planeIndex = plane.substring(plane.lastIndexOf('/') + 1, plane.lastIndexOf('.'));
+                    String planesString = Arrays.toString(planes).replaceAll("\\[|\\]|,|\\s", "");
+                    writer.write(username + "," + password + "," + id + "," + gold + "," + planeIndex + "," + planesString + "\n");
+                } else {
+                    writer.write(line + "\n");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

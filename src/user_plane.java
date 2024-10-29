@@ -12,10 +12,9 @@ public class user_plane extends JLabel {
     public int getLives(){
         return lives;
     }
-    public user_plane() {
+    public user_plane(String file) {
         try {
-            // 加载贴图
-            image = ImageIO.read(new File("./resources/blueplane.png"));
+            image = ImageIO.read(new File(file));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -47,4 +46,5 @@ public class user_plane extends JLabel {
         lives--;
         life = false;
     }
+
 }

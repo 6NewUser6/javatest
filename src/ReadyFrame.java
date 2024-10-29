@@ -3,20 +3,28 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 public class ReadyFrame extends JFrame {
+    public String plane = "./resources/plane1.png";
+    private User user;
+
     public ReadyFrame(User user) {
+        this.user = user;
+
         // 设置窗口标题
+        plane = user.getPlane();
         setTitle("一起打飞机");
 
         // 设置窗口大小
         setSize(600, 400);
 
         // 设置窗口关闭时的默认操作
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // 修改默认关闭操作
         // 禁止改动窗口大小
         setResizable(false);
         // 将窗口居中显示
@@ -24,17 +32,16 @@ public class ReadyFrame extends JFrame {
 
         // 禁用布局管理器
         setLayout(null);
-        //更改背景
+        // 更改背景
         JPanel contentPane = getJPanelBackground();
         setContentPane(contentPane);
 
         // 左上角显示用户名
-        JLabel usernameLabel = new JLabel("欢迎"+user.getName());
+        JLabel usernameLabel = new JLabel("欢迎" + user.getName());
         usernameLabel.setForeground(Color.red);
         usernameLabel.setBounds(10, 10, 150, 20); // 设置位置和大小
         contentPane.add(usernameLabel);
 
-        // 上半部分中间显示 "一起打飞机"
         try {
             // 读取原始图片
             BufferedImage originalImage = ImageIO.read(new File("./resources/title.png"));
@@ -67,13 +74,6 @@ public class ReadyFrame extends JFrame {
             e.printStackTrace();
         }
 
-//        // 右上角更换背景按钮
-//        JButton changeBackgroundButton = new JButton("更换背景");
-//        changeBackgroundButton.setPreferredSize(new Dimension(70, 20)); // 设置按钮大小
-//        changeBackgroundButton.setMargin(new Insets(2, 2, 2, 2));
-//        changeBackgroundButton.setBounds(500, 10, 70, 20); // 设置位置和大小
-//        contentPane.add(changeBackgroundButton);
-
         // 创建一个面板用于放置竖直排列的按钮
         JPanel buttonPanel = new JPanel();
         buttonPanel.setOpaque(false);
@@ -84,18 +84,18 @@ public class ReadyFrame extends JFrame {
         // 创建四个按钮
         Dimension buttonSize = new Dimension(150, 40);
         JButton startGameButton = new JButton("开始游戏");
-        JButton historyButton = new JButton("历史记录");
-        JButton selectPlaneButton = new JButton("选择飞机");
+        JButton choiceButton = new JButton("选择飞机");
+        JButton shoppingButton = new JButton("开心商城");
         JButton newPlayerButton = new JButton("新手提示");
 
         startGameButton.setMaximumSize(buttonSize);
         startGameButton.setMinimumSize(buttonSize);
 
-        historyButton.setMaximumSize(buttonSize);
-        historyButton.setMinimumSize(buttonSize);
+        choiceButton.setMaximumSize(buttonSize);
+        choiceButton.setMinimumSize(buttonSize);
 
-        selectPlaneButton.setMaximumSize(buttonSize);
-        selectPlaneButton.setMinimumSize(buttonSize);
+        shoppingButton.setMaximumSize(buttonSize);
+        shoppingButton.setMinimumSize(buttonSize);
 
         newPlayerButton.setMaximumSize(buttonSize);
         newPlayerButton.setMinimumSize(buttonSize);
@@ -103,23 +103,60 @@ public class ReadyFrame extends JFrame {
         // 将按钮添加到按钮面板，并在每个按钮之间添加 10 像素的间隔
         buttonPanel.add(startGameButton);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(historyButton);
+        buttonPanel.add(choiceButton);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(selectPlaneButton);
+        buttonPanel.add(shoppingButton);
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(newPlayerButton);
+
+        choiceButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                SwingUtilities.invokeLater(() -> {
+                    choiceFrame choiceFrame = new choiceFrame(user);
+                    choiceFrame.setVisible(true);
+                });
+            }
+        });
+
         startGameButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 dispose();
                 // 打开新的 Main_play 窗口
                 SwingUtilities.invokeLater(() -> {
-                    Main_play mainPlayFrame = new Main_play(user);
+                    Main_play mainPlayFrame = new Main_play(user, plane);
                     mainPlayFrame.setVisible(true);
                 });
             }
         });
+
+        shoppingButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                // 打开新的 Main_play 窗口
+                SwingUtilities.invokeLater(() -> {
+                    shoppingFrame shoppingFrame = new shoppingFrame(user);
+                    shoppingFrame.setVisible(true);
+                });
+            }
+        });
+
+        // 添加窗口关闭监听器
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onWindowClosing();
+            }
+        });
+
         // 设置窗口可见
         setVisible(true);
+    }
+
+    private void onWindowClosing() {
+        System.out.println("窗口即将关闭");
+        user.save();
+        // 在这里添加你想要在窗口关闭时执行的操作
     }
 
     private static JPanel getJPanelBackground() {
@@ -142,10 +179,5 @@ public class ReadyFrame extends JFrame {
         return contentPane;
     }
 
-    public static void main(String[] args) {
-        // 在事件调度线程上创建并显示窗口
-        SwingUtilities.invokeLater(() -> {
-            new ReadyFrame(new User("游客10086","123456",-1));
-        });
-    }
+
 }

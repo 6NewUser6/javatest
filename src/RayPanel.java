@@ -4,20 +4,24 @@ import java.util.Random;
 import java.util.Vector;
 
 public class RayPanel extends JPanel {
-    private static final Vector<rays> rayPoints = new Vector<>();
+    private static final Vector<Rays> rayPoints = new Vector<>();
     private boolean addNewRay = false;
     private final user_plane plane;
     private final AudioPlayer audioPlayer = new AudioPlayer(".\\resources\\out.wav");
     private final Main_play play;
     private int score = 0;
-    private int magnification=10;
+    private int magnification = 10;
     private User user;
-    public RayPanel(user_plane plane, Main_play play,User u) {
+
+    public RayPanel(user_plane plane, Main_play play, User u) {
         this.plane = plane;
         this.play = play;
         this.user = u;
+        setOpaque(false);
     }
-
+    public boolean get(){
+        return addNewRay;
+    }
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -27,11 +31,11 @@ public class RayPanel extends JPanel {
         }
         drawRays(g);
     }
+
     private void initializeRays() {
         Random random = new Random();
         int width = getWidth();
         int height = getHeight();
-
         int x1 = 0, y1 = 0, x2 = 0, y2 = 0, h1, h2;
         h1 = random.nextInt(4); // 上下左右
         if (h1 == 0) {
@@ -61,13 +65,14 @@ public class RayPanel extends JPanel {
             y2 = random.nextInt(height);
             x2 = width;
         }
-        rayPoints.add(new rays(x1, x2, y1, y2));
+        rayPoints.add(new Rays(x1, x2, y1, y2));
     }
+
     public boolean checkCollisions() {
         int userX = plane.getX() + plane.getWidth() / 2;
         int userY = plane.getY() + plane.getHeight() / 2;
         rayPoints.removeIf(ray -> ray.getColor() == null);
-        for (rays ray : rayPoints) {
+        for (Rays ray : rayPoints) {
             // 调用 judgement 方法
             if (plane.isLife() && ray.isBlack() && ray.judgement(userX, userY)) {
                 audioPlayer.playOnce();
@@ -81,7 +86,8 @@ public class RayPanel extends JPanel {
         play.updateScoreLabel(score);
         return true;
     }
-    public void died(){
+
+    public void died() {
         if (plane.getLives() <= 0) {
             stopAllTimers(); // 停止所有计时器
             play.dispose(); // 关闭当前窗口
@@ -98,7 +104,7 @@ public class RayPanel extends JPanel {
         // 删除颜色为 null 的射线
         rayPoints.removeIf(ray -> ray.getColor() == null);
 
-        for (rays ray : rayPoints) {
+        for (Rays ray : rayPoints) {
             if (ray.getColor() == null) {
                 continue;
             }
@@ -107,8 +113,8 @@ public class RayPanel extends JPanel {
         }
     }
 
-    public void setAddNewRay(boolean addNewRay) {
-        this.addNewRay = addNewRay;
+    public void setAddNewRay() {
+        this.addNewRay = true;
     }
 
     public void findPlane() {
@@ -141,7 +147,7 @@ public class RayPanel extends JPanel {
         double t = 10000; // 一个足够大的值，确保射线贯穿整个窗口
         x2 = (int) (x1 + dx * t);
         y2 = (int) (y1 + dy * t);
-        rayPoints.add(new rays(x1, x2, y1, y2));
+        rayPoints.add(new Rays(x1, x2, y1, y2));
     }
 
     // 停止所有计时器的方法
