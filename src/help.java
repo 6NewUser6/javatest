@@ -56,11 +56,11 @@ public class help extends JLabel implements Obstacle {
         Image scaledImage = image.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
         setIcon(new ImageIcon(scaledImage));
         flag = true;
-        timer = new Timer(5, new ActionListener() {
+        timer = new Timer(100, new ActionListener() {
             private int step = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (step <= 600) {
+                if (step <= 30) {
                     if (judgement(plane.getX(), plane.getY())&& flag) {
                         setIcon(null);
                         System.out.println("win!");

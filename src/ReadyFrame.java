@@ -1,13 +1,15 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import static java.lang.System.exit;
 
 public class ReadyFrame extends JFrame {
     public String plane = "./resources/plane1.png";
@@ -81,36 +83,25 @@ public class ReadyFrame extends JFrame {
         buttonPanel.setBounds(225, 150, 200, 200); // 设置位置和大小
         contentPane.add(buttonPanel);
 
-        // 创建四个按钮
+        // 创建四个带有点击事件的标签
         Dimension buttonSize = new Dimension(150, 40);
-        JButton startGameButton = new JButton("开始游戏");
-        JButton choiceButton = new JButton("选择飞机");
-        JButton shoppingButton = new JButton("开心商城");
-        JButton newPlayerButton = new JButton("新手提示");
+        JLabel startGameLabel = createClickableLabel("./resources/startGame.png", buttonSize);
+        JLabel choiceLabel = createClickableLabel("./resources/choice.png", buttonSize);
+        JLabel shoppingLabel = createClickableLabel("./resources/shopping.png", buttonSize);
+        JLabel newPlayerLabel = createClickableLabel("./resources/newPlayer.png", buttonSize);
 
-        startGameButton.setMaximumSize(buttonSize);
-        startGameButton.setMinimumSize(buttonSize);
-
-        choiceButton.setMaximumSize(buttonSize);
-        choiceButton.setMinimumSize(buttonSize);
-
-        shoppingButton.setMaximumSize(buttonSize);
-        shoppingButton.setMinimumSize(buttonSize);
-
-        newPlayerButton.setMaximumSize(buttonSize);
-        newPlayerButton.setMinimumSize(buttonSize);
-
-        // 将按钮添加到按钮面板，并在每个按钮之间添加 10 像素的间隔
-        buttonPanel.add(startGameButton);
+        // 将标签添加到按钮面板，并在每个标签之间添加 10 像素的间隔
+        buttonPanel.add(startGameLabel);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(choiceButton);
+        buttonPanel.add(choiceLabel);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(shoppingButton);
+        buttonPanel.add(shoppingLabel);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(newPlayerButton);
+        buttonPanel.add(newPlayerLabel);
 
-        choiceButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        choiceLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 dispose();
                 SwingUtilities.invokeLater(() -> {
                     choiceFrame choiceFrame = new choiceFrame(user);
@@ -119,8 +110,9 @@ public class ReadyFrame extends JFrame {
             }
         });
 
-        startGameButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        startGameLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 dispose();
                 // 打开新的 Main_play 窗口
                 SwingUtilities.invokeLater(() -> {
@@ -130,8 +122,9 @@ public class ReadyFrame extends JFrame {
             }
         });
 
-        shoppingButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+        shoppingLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 dispose();
                 // 打开新的 Main_play 窗口
                 SwingUtilities.invokeLater(() -> {
@@ -156,6 +149,7 @@ public class ReadyFrame extends JFrame {
     private void onWindowClosing() {
         System.out.println("窗口即将关闭");
         user.save();
+        exit(0);
         // 在这里添加你想要在窗口关闭时执行的操作
     }
 
@@ -179,5 +173,38 @@ public class ReadyFrame extends JFrame {
         return contentPane;
     }
 
+    private JLabel createClickableLabel(String imagePath, Dimension size) {
+        ImageIcon icon = new ImageIcon(imagePath);
+        JLabel label = new JLabel(icon) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (icon != null) {
+                    // 绘制贴图
+                    g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
+                } else {
+                    // 如果贴图加载失败，使用红色填充
+                    g.setColor(Color.RED);
+                    g.fillOval(0, 0, getWidth(), getHeight());
+                }
+            }
+        };
+        label.setPreferredSize(size);
+        label.setMaximumSize(size);
+        label.setMinimumSize(size);
+        return label;
+    }
 
+    public static void main(String[] args) {
+        // 示例用户对象
+        User user = new User();
+        user.setName("玩家");
+        user.setPlane("./resources/plane1.png");
+
+        // 创建并显示 ReadyFrame
+        SwingUtilities.invokeLater(() -> {
+            ReadyFrame frame = new ReadyFrame(user);
+            frame.setVisible(true);
+        });
+    }
 }

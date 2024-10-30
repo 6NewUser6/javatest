@@ -97,11 +97,11 @@ public class Main_play extends JFrame {
         layeredPane.add(goldLabel, Integer.valueOf(2));
         goldLabel.setVisible(false);
         // 初始化 Timer，每秒增加一条射线
-        timer = new Timer(1, e -> {
+        timer = new Timer(10, e -> {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastAddNewRayTime >= a) {
                 addNewRay();
-                a=(a>200?(int)Math.round(a*0.99):300);
+                a=(a>200?(int)Math.round(a*0.99):200);
                 lastAddNewRayTime = currentTime;
             }
 
@@ -123,7 +123,7 @@ public class Main_play extends JFrame {
                 rayPanel.died();
             }
 
-            if (currentTime - lastMouseMoveTime >= 2) {
+            if (currentTime - lastMouseMoveTime >= 10) {
                 updatePlanePosition(mouseX, mouseY);
                 lastMouseMoveTime = currentTime;
             }

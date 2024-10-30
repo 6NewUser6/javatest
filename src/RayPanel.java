@@ -12,7 +12,6 @@ public class RayPanel extends JPanel {
     private int score = 0;
     private int magnification = 10;
     private User user;
-
     public RayPanel(user_plane plane, Main_play play, User u) {
         this.plane = plane;
         this.play = play;
@@ -153,5 +152,6 @@ public class RayPanel extends JPanel {
     // 停止所有计时器的方法
     private void stopAllTimers() {
         play.stopTimers();
+        rayPoints.clear();
     }
 }
