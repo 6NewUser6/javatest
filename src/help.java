@@ -63,7 +63,6 @@ public class help extends JLabel implements Obstacle {
                 if (step <= 30) {
                     if (judgement(plane.getX(), plane.getY())&& flag) {
                         setIcon(null);
-                        System.out.println("win!");
                         plane.help();
                         flag = false;
                     }

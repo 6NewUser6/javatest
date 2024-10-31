@@ -96,12 +96,12 @@ public class User {
             }
 
             if (!repeat(filename, a)) {
-                System.out.println("用户名重复了，请重新写一个用户名");
+//                System.out.println("用户名重复了，请重新写一个用户名");
                 return false;
             }
 
             if (!true_password(b)) {
-                System.out.println("密码里要同时有大小写字母，数字，且长度在12-18之间，不包含特殊字符");
+//                System.out.println("密码里要同时有大小写字母，数字，且长度在12-18之间，不包含特殊字符");
                 return false;
             }
 

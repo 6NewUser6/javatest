@@ -21,11 +21,6 @@ public class choiceFrame extends JFrame {
         // 禁用布局管理器
         setLayout(null);
 
-        // 添加 "提示" 按钮
-        JButton hintButton = new JButton("提示");
-        hintButton.setBounds(500, 50, 80, 30); // 设置按钮位置和大小
-        add(hintButton);
-
         // 定义图像和按钮的初始位置
         int x = 50;
         int y = 50;
@@ -63,7 +58,11 @@ public class choiceFrame extends JFrame {
                     radioButton.setActionCommand(imagePath); // 设置 ActionCommand 为图像的 URL
                     buttonGroup.add(radioButton);
                     add(radioButton);
-
+                    if (row == 0 && col == 0) {
+                        radioButton.setSelected(true);
+                        plane = imagePath;
+                        user.setPlane(plane);
+                    }
                     colCount++;
                     if (colCount == 4) {
                         colCount = 0;
@@ -83,7 +82,6 @@ public class choiceFrame extends JFrame {
                 if (component instanceof JRadioButton radioButton) {
                     if (radioButton.isSelected()) {
                         plane = radioButton.getActionCommand();
-                        System.out.println("选择的飞机图像 URL: " + plane);
                         user.setPlane(plane);
                         dispose();
                         SwingUtilities.invokeLater(() -> {

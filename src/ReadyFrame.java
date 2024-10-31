@@ -44,37 +44,11 @@ public class ReadyFrame extends JFrame {
         usernameLabel.setBounds(10, 10, 150, 20); // 设置位置和大小
         contentPane.add(usernameLabel);
 
-        try {
-            // 读取原始图片
-            BufferedImage originalImage = ImageIO.read(new File("./resources/title.png"));
-
-            // 计算目标大小，保持原始比例
-            int targetWidth = 220;
-            int targetHeight = 106;
-            int originalWidth = originalImage.getWidth();
-            int originalHeight = originalImage.getHeight();
-
-            // 计算缩放比例
-            double widthRatio = (double) targetWidth / originalWidth;
-            double heightRatio = (double) targetHeight / originalHeight;
-            double ratio = Math.min(widthRatio, heightRatio);
-
-            // 计算缩放后的尺寸
-            int scaledWidth = (int) (originalWidth * ratio);
-            int scaledHeight = (int) (originalHeight * ratio);
-
-            // 创建缩放后的图片
-            Image scaledImage = originalImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-
-            // 创建 ImageIcon 并设置到 JLabel
-            ImageIcon titleIcon = new ImageIcon(scaledImage);
-            JLabel titleLabel = new JLabel(titleIcon);
-            titleLabel.setBounds(200, 30, scaledWidth, scaledHeight); // 设置位置和大小
-            contentPane.add(titleLabel);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // 创建标题标签
+        Dimension titleSize = new Dimension(300, 100);
+        JLabel titleLabel = createClickableLabel("./resources/title.png", titleSize);
+        titleLabel.setBounds(150, 30, titleSize.width, titleSize.height); // 设置位置和大小
+        contentPane.add(titleLabel);
 
         // 创建一个面板用于放置竖直排列的按钮
         JPanel buttonPanel = new JPanel();
@@ -88,7 +62,7 @@ public class ReadyFrame extends JFrame {
         JLabel startGameLabel = createClickableLabel("./resources/startGame.png", buttonSize);
         JLabel choiceLabel = createClickableLabel("./resources/choice.png", buttonSize);
         JLabel shoppingLabel = createClickableLabel("./resources/shopping.png", buttonSize);
-        JLabel newPlayerLabel = createClickableLabel("./resources/newPlayer.png", buttonSize);
+        JLabel difficultyLabel = createClickableLabel("./resources/difficult.png", buttonSize);
 
         // 将标签添加到按钮面板，并在每个标签之间添加 10 像素的间隔
         buttonPanel.add(startGameLabel);
@@ -97,7 +71,7 @@ public class ReadyFrame extends JFrame {
         buttonPanel.add(Box.createVerticalStrut(10));
         buttonPanel.add(shoppingLabel);
         buttonPanel.add(Box.createVerticalStrut(10));
-        buttonPanel.add(newPlayerLabel);
+        buttonPanel.add(difficultyLabel);
 
         choiceLabel.addMouseListener(new MouseAdapter() {
             @Override
@@ -133,6 +107,20 @@ public class ReadyFrame extends JFrame {
                 });
             }
         });
+
+        // 添加 "setting" 标签
+        Dimension settingSize = new Dimension(80, 40);
+        JLabel settingLabel = createClickableLabel("./resources/setting.png", settingSize);
+        settingLabel.setBounds(getWidth() - settingSize.width - 30, 10, settingSize.width, settingSize.height); // 设置位置和大小
+        settingLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // 处理 "setting" 点击事件
+                System.out.println("Setting clicked");
+                // 在这里添加你想要在点击 "setting" 时执行的操作
+            }
+        });
+        contentPane.add(settingLabel);
 
         // 添加窗口关闭监听器
         addWindowListener(new WindowAdapter() {
@@ -178,7 +166,6 @@ public class ReadyFrame extends JFrame {
         JLabel label = new JLabel(icon) {
             @Override
             protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
                 if (icon != null) {
                     // 绘制贴图
                     g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
