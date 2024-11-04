@@ -68,11 +68,18 @@ public class SettingFrame extends JFrame {
         boolean musicEnabled = musicCheckBox.isSelected();
         boolean soundEffectEnabled = soundEffectCheckBox.isSelected();
 
-        // 这里可以添加保存设置的逻辑
-        // 例如，将设置保存到文件或数据库中
+        if (musicEnabled) {
+            ReadyFrame.audioPlayer.setVolume(1);
+        }else {
+            ReadyFrame.audioPlayer.setVolume(0);
+        }
+        if (soundEffectEnabled) {
+            ReadyFrame.killPlayer.setVolume(1);
+        }else {
+            ReadyFrame.killPlayer.setVolume(0);
+        }
+        dispose();
 
-        // 显示保存成功的消息
-        JOptionPane.showMessageDialog(this, "音乐设置: " + musicEnabled + "\n音效设置: " + soundEffectEnabled, "保存成功", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {

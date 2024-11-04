@@ -12,12 +12,10 @@ public class ReadyFrame extends JFrame {
     public String plane;
     private final User user;
     public static final AudioPlayer killPlayer = new AudioPlayer(".\\resources\\out.wav");
-    AudioPlayer audioPlayer=new AudioPlayer(".\\resources\\backgroundMusic.wav");
+    public static final AudioPlayer audioPlayer=new AudioPlayer(".\\resources\\backgroundMusic.wav");
 
     public ReadyFrame(User user) {
-
         this.user = user;
-        audioPlayer.playLoop();
         // 设置窗口标题
         plane = user.getPlane();
         setTitle("一起打飞机");
@@ -115,9 +113,10 @@ public class ReadyFrame extends JFrame {
         settingLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // 处理 "setting" 点击事件
-                System.out.println("Setting clicked");
-                // 在这里添加你想要在点击 "setting" 时执行的操作
+                SwingUtilities.invokeLater(() -> {
+                    SettingFrame settingFrame = new SettingFrame();
+                    settingFrame.setVisible(true);
+                });
             }
         });
         contentPane.add(settingLabel);

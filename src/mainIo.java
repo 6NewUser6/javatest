@@ -44,6 +44,7 @@ public class mainIo {
                     else{//进入游戏
                         ((JFrame) panel.getTopLevelAncestor()).dispose();
                         SwingUtilities.invokeLater(() -> {
+                            ReadyFrame.audioPlayer.playLoop();
                             ReadyFrame frame = new ReadyFrame(u);
                             frame.setVisible(true);
                         });
