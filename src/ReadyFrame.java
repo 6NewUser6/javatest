@@ -106,6 +106,16 @@ public class ReadyFrame extends JFrame {
             }
         });
 
+        difficultyLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                SwingUtilities.invokeLater(() -> {
+                    GameChoiceFrame gameChoiceFrame = new GameChoiceFrame();
+                    gameChoiceFrame.setVisible(true);
+                });
+            }
+        });
+
         // 添加 "setting" 标签
         Dimension settingSize = new Dimension(80, 40);
         JLabel settingLabel = createClickableLabel("./resources/setting.png", settingSize);

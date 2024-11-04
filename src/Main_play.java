@@ -10,7 +10,7 @@ public class Main_play extends JFrame {
     private final user_plane plane;
     private final RayPanel rayPanel;
     private final Timer timer;
-    private int a = 400;
+    public static int a = 800;
     private final JLabel lifeLabel;
     private final JLabel scoreLabel;
     private final JLabel mygoldLabel;
@@ -26,6 +26,7 @@ public class Main_play extends JFrame {
     private int mouseX = 0;
     private int mouseY = 0;
     private final User user;
+    public static int addTime;
     public Main_play(User user, String file) {
         // 初始化窗口
         this.user = user;
@@ -77,7 +78,7 @@ public class Main_play extends JFrame {
         scoreLabel.setFont(new Font("宋体", Font.PLAIN, 16)); // 设置字体
         layeredPane.add(scoreLabel, Integer.valueOf(2));
 
-        mygoldLabel = new JLabel("此次获得金币:0");
+        mygoldLabel = new JLabel("当前金币:"+user.getGold());
         mygoldLabel.setBounds(1500, 50, 150, 20); // 设置标签的位置和大小
         mygoldLabel.setFont(new Font("宋体", Font.PLAIN, 16)); // 设置字体
         layeredPane.add(mygoldLabel,Integer.valueOf(2));
@@ -97,15 +98,16 @@ public class Main_play extends JFrame {
         layeredPane.add(goldLabel, Integer.valueOf(2));
         goldLabel.setVisible(false);
         // 初始化 Timer，每秒增加一条射线
+        addTime=a;
         timer = new Timer(10, e -> {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastAddNewRayTime >= a) {
                 addNewRay();
-                a=(a>200?(int)Math.round(a*0.99):200);
+                addTime=(addTime>a/2?(int)Math.round(addTime*0.99):a/2);
                 lastAddNewRayTime = currentTime;
             }
 
-            if (currentTime - lastFindPlaneTime >= 1000) {
+            if (currentTime - lastFindPlaneTime >= addTime* 2L) {
                 findPlane();
                lastFindPlaneTime = currentTime;
             }
