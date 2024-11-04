@@ -7,19 +7,15 @@ public class RayPanel extends JPanel {
     private static final Vector<Rays> rayPoints = new Vector<>();
     private boolean addNewRay = false;
     private final user_plane plane;
-    private final AudioPlayer audioPlayer = new AudioPlayer(".\\resources\\out.wav");
     private final Main_play play;
     private int score = 0;
     private int magnification = 10;
-    private User user;
+    private final User user;
     public RayPanel(user_plane plane, Main_play play, User u) {
         this.plane = plane;
         this.play = play;
         this.user = u;
         setOpaque(false);
-    }
-    public boolean get(){
-        return addNewRay;
     }
     @Override
     protected void paintComponent(Graphics g) {
@@ -49,10 +45,9 @@ public class RayPanel extends JPanel {
             x1 = width;
         }
 
-        h2 = random.nextInt(4); // 上下左右
-        while (h2 == h1) {
+        do {
             h2 = random.nextInt(4);
-        }
+        } while (h2 == h1);
         if (h2 == 0) {
             x2 = random.nextInt(width);
         } else if (h2 == 1) {
@@ -74,7 +69,7 @@ public class RayPanel extends JPanel {
         for (Rays ray : rayPoints) {
             // 调用 judgement 方法
             if (plane.isLife() && ray.isBlack() && ray.judgement(userX, userY)) {
-                audioPlayer.playOnce();
+                ReadyFrame.killPlayer.playOnce();
                 plane.killed();
                 play.updateLifeLabel(); // 更新生命值标签
                 return false;
@@ -90,7 +85,6 @@ public class RayPanel extends JPanel {
         if (plane.getLives() <= 0) {
             stopAllTimers(); // 停止所有计时器
             play.dispose(); // 关闭当前窗口
-            JOptionPane.showMessageDialog(this, "你掉了五次血", "碰撞提示", JOptionPane.WARNING_MESSAGE);
             new ReadyFrame(user).setVisible(true); // 打开新的 ReadyFrame
             rayPoints.clear();
         }

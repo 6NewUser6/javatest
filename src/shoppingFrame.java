@@ -4,12 +4,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class shoppingFrame extends JFrame {
-    private String plane; // 用于存储选择的飞机图像的 URL
-    private JLabel selectedLabel; // 用于跟踪当前选中的 JLabel
-    private User user; // 用户对象
-
     public shoppingFrame(User user) {
-        this.user = user;
 
         // 设置窗口标题
         setTitle("一起打飞机");

@@ -25,7 +25,7 @@ public class Main_play extends JFrame {
     private long goldTime = System.currentTimeMillis() + 1000;
     private int mouseX = 0;
     private int mouseY = 0;
-    private User user;
+    private final User user;
     public Main_play(User user, String file) {
         // 初始化窗口
         this.user = user;

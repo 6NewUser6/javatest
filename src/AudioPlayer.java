@@ -5,6 +5,7 @@ import java.io.IOException;
 public class AudioPlayer {
 
     private Clip clip;
+    private FloatControl gainControl;
 
     public AudioPlayer(String filePath) {
         try {
@@ -14,6 +15,9 @@ public class AudioPlayer {
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             clip = (Clip) AudioSystem.getLine(info);
             clip.open(audioStream);
+
+            // 获取音量控制器
+            gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
         } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
             e.printStackTrace();
         }
@@ -28,6 +32,7 @@ public class AudioPlayer {
             }).start();
         }
     }
+
     public void playLoop() {
         if (clip != null) {
             clip.setFramePosition(0); // 重置音频到开始位置
@@ -35,10 +40,11 @@ public class AudioPlayer {
             clip.start();
         }
     }
-
-    public void stop() {
-        if (clip != null && clip.isRunning()) {
-            clip.stop();
+    public void setVolume(float volume) {
+        if (gainControl != null) {
+            float min = gainControl.getMinimum();
+            float max = gainControl.getMaximum();
+            gainControl.setValue(min + (max - min) * volume);
         }
     }
 }

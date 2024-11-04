@@ -1,23 +1,23 @@
-import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static java.lang.System.exit;
 
 public class ReadyFrame extends JFrame {
-    public String plane = "./resources/plane1.png";
-    private User user;
+    public String plane;
+    private final User user;
+    public static final AudioPlayer killPlayer = new AudioPlayer(".\\resources\\out.wav");
+    AudioPlayer audioPlayer=new AudioPlayer(".\\resources\\backgroundMusic.wav");
 
     public ReadyFrame(User user) {
-        this.user = user;
 
+        this.user = user;
+        audioPlayer.playLoop();
         // 设置窗口标题
         plane = user.getPlane();
         setTitle("一起打飞机");
@@ -166,14 +166,8 @@ public class ReadyFrame extends JFrame {
         JLabel label = new JLabel(icon) {
             @Override
             protected void paintComponent(Graphics g) {
-                if (icon != null) {
-                    // 绘制贴图
-                    g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
-                } else {
-                    // 如果贴图加载失败，使用红色填充
-                    g.setColor(Color.RED);
-                    g.fillOval(0, 0, getWidth(), getHeight());
-                }
+                // 绘制贴图
+                g.drawImage(icon.getImage(), 0, 0, getWidth(), getHeight(), this);
             }
         };
         label.setPreferredSize(size);

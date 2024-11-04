@@ -4,12 +4,12 @@ import java.util.Arrays;
 import java.util.List;
 
 public class User {
-    private static String username;
-    private static String password;
-    private static int id;
+    private String username;
+    private final String password;
+    private final int id;
     public int[] planes = new int[16]; // 记录飞机是否被购买的列表
-    private static int gold;
-    private String plane = "./resources/plane1.png";
+    private int gold;
+    private String plane;
 
     public User() {
         this("", "", 0, 0, "plane1", new int[]{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
@@ -18,9 +18,9 @@ public class User {
     public User(String username, String password, int uid, int gold, String plane, int[] planes) {
         Arrays.fill(this.planes, 0);
         this.planes = planes;
-        User.username = username;
-        User.password = password;
-        id = uid;
+        this.username = username;
+        this.password = password;
+        this.id = uid;
         this.gold = gold;
         this.plane = plane;
     }
@@ -34,17 +34,8 @@ public class User {
     }
 
     public void setName(String name) {
-        User.username = name;
+        this.username = name;
     }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        User.password = password;
-    }
-
     public int getId() {
         return id;
     }
@@ -169,10 +160,6 @@ public class User {
         return input;
     }
 
-    public static void saveAll() {
-        // 保存用户数据到文件
-    }
-
     public void gold() {
         gold += 10;
     }
@@ -196,11 +183,6 @@ public class User {
     public void purchasePlane(int planeIndex) {
         planes[planeIndex] = 1;
     }
-
-    public int[] getPlanes() {
-        return planes;
-    }
-
     public void save() {
         String filename = "users.csv";
         List<String> lines = new ArrayList<>();
