@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="javahub:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/javahub_jar</output-path>
+    <root id="archive" name="javahub.jar">
+      <element id="module-output" name="javahub" />
+    </root>
+  </artifact>
+</component>

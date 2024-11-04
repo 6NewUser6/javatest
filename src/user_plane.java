@@ -46,5 +46,8 @@ public class user_plane extends JLabel {
         lives--;
         life = false;
     }
+    public void setLives(){
+        lives = -1;
+    }
 
 }

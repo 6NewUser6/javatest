@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -27,6 +29,7 @@ public class Main_play extends JFrame {
     private int mouseY = 0;
     private final User user;
     public static int addTime;
+
     public Main_play(User user, String file) {
         // 初始化窗口
         this.user = user;
@@ -65,7 +68,7 @@ public class Main_play extends JFrame {
         rayPanel.setVisible(true); // 确保 rayPanel 可见
         layeredPane.add(rayPanel, Integer.valueOf(1));
         // 将 trackingLabel 添加到 JFrame 的内容面板
-        layeredPane.add(plane,Integer.valueOf(5));
+        layeredPane.add(plane, Integer.valueOf(5));
 
         // 创建并添加生命值标签
         lifeLabel = new JLabel("生命:5");
@@ -78,10 +81,10 @@ public class Main_play extends JFrame {
         scoreLabel.setFont(new Font("宋体", Font.PLAIN, 16)); // 设置字体
         layeredPane.add(scoreLabel, Integer.valueOf(2));
 
-        mygoldLabel = new JLabel("当前金币:"+user.getGold());
+        mygoldLabel = new JLabel("当前金币:" + user.getGold());
         mygoldLabel.setBounds(1500, 50, 150, 20); // 设置标签的位置和大小
         mygoldLabel.setFont(new Font("宋体", Font.PLAIN, 16)); // 设置字体
-        layeredPane.add(mygoldLabel,Integer.valueOf(2));
+        layeredPane.add(mygoldLabel, Integer.valueOf(2));
         ImageIcon backgroundImageIcon = new ImageIcon("./resources/mainBackground.jpg");
         Image backgroundImage = backgroundImageIcon.getImage().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH);
         ImageIcon scaledBackgroundImageIcon = new ImageIcon(backgroundImage);
@@ -92,24 +95,35 @@ public class Main_play extends JFrame {
         // 设置窗口可见
         setVisible(true);
         helpLabel = new help(plane);
-        layeredPane.add(helpLabel,Integer.valueOf(2));
+        layeredPane.add(helpLabel, Integer.valueOf(2));
         helpLabel.setVisible(false);
         goldLabel = new gold(plane);
         layeredPane.add(goldLabel, Integer.valueOf(2));
         goldLabel.setVisible(false);
+
+        // 添加 ESC 键事件监听器
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    onEscPressed();
+                }
+            }
+        });
+
         // 初始化 Timer，每秒增加一条射线
-        addTime=a;
+        addTime = a;
         timer = new Timer(10, e -> {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastAddNewRayTime >= a) {
                 addNewRay();
-                addTime=(addTime>a/2?(int)Math.round(addTime*0.99):a/2);
+                addTime = (addTime > a / 2 ? (int) Math.round(addTime * 0.99) : a / 2);
                 lastAddNewRayTime = currentTime;
             }
 
-            if (currentTime - lastFindPlaneTime >= addTime* 2L) {
+            if (currentTime - lastFindPlaneTime >= addTime * 2L) {
                 findPlane();
-               lastFindPlaneTime = currentTime;
+                lastFindPlaneTime = currentTime;
             }
 
             if (currentTime - lastLifeTime >= 2000) {
@@ -137,8 +151,8 @@ public class Main_play extends JFrame {
             if (currentTime - goldTime >= 10000) {
                 addGold();
                 goldTime = currentTime;
-                goldLabel.justDoIt(user,this);
-                System.out.println("现在的金币"+user.getGold());
+                goldLabel.justDoIt(user, this);
+                System.out.println("现在的金币" + user.getGold());
             }
         });
         timer.start();
@@ -171,8 +185,6 @@ public class Main_play extends JFrame {
         goldLabel.setGold();
         goldLabel.setVisible(true);
     }
-
-
 
     // 增加一条射线的方法
     public void addNewRay() {
@@ -221,5 +233,11 @@ public class Main_play extends JFrame {
             plane.setLocation(x, y);
             rayPanel.repaint(); // 手动重绘 rayPanel
         }
+    }
+
+    // 处理 ESC 键按下的方法
+    private void onEscPressed() {
+        plane.setLives();
+        rayPanel.died();
     }
 }
