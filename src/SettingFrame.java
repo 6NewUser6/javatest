@@ -17,7 +17,7 @@ public class SettingFrame extends JFrame {
         setSize(300, 150);
 
         // 设置窗口关闭操作
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         // 创建面板
         JPanel panel = new JPanel();

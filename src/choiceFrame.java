@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class choiceFrame extends JFrame {
     private String plane; // 用于存储选择的飞机图像的 URL
@@ -11,8 +13,29 @@ public class choiceFrame extends JFrame {
         // 设置窗口大小
         setSize(600, 600);
 
-        // 设置窗口关闭时的默认操作
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        // 添加窗口事件监听器
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                boolean flag = false;
+                // 获取选中的 JRadioButton 的 ActionCommand
+                for (Component component : getContentPane().getComponents()) {
+                    if (component instanceof JRadioButton radioButton) {
+                        if (radioButton.isSelected()) {
+                            plane = radioButton.getActionCommand();
+                            user.setPlane(plane);
+                            dispose();
+                            SwingUtilities.invokeLater(() -> {
+                                ReadyFrame readyFrame = new ReadyFrame(user);
+                                readyFrame.setVisible(true);
+                            });
+                        }
+                    }
+                }
+            }
+        });
         // 禁止改动窗口大小
         setResizable(false);
         // 将窗口居中显示
@@ -88,13 +111,8 @@ public class choiceFrame extends JFrame {
                             ReadyFrame readyFrame = new ReadyFrame(user);
                             readyFrame.setVisible(true);
                         });
-                        flag = true;
-                        break;
                     }
                 }
-            }
-            if (!flag) {
-                System.out.println("没有选择飞机");
             }
         });
         add(saveButton);

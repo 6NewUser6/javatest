@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class shoppingFrame extends JFrame {
     public shoppingFrame(User user) {
@@ -13,7 +15,17 @@ public class shoppingFrame extends JFrame {
         setSize(600, 600);
 
         // 设置窗口关闭时的默认操作
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+
+        // 添加窗口事件监听器
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+                ReadyFrame readyFrame = new ReadyFrame(user);
+                readyFrame.setVisible(true);
+            }
+        });
         // 禁止改动窗口大小
         setResizable(false);
         // 将窗口居中显示

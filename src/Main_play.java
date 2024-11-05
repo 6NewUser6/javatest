@@ -31,6 +31,7 @@ public class Main_play extends JFrame {
     public static int addTime;
 
     public Main_play(User user, String file) {
+
         // 初始化窗口
         this.user = user;
         setTitle("飞机？boom！");
@@ -61,7 +62,10 @@ public class Main_play extends JFrame {
                 mouseY = e.getY();
             }
         });
-
+        if (a==200){
+            a=400;
+            plane.setLives(1);
+        }
         // 创建并添加 rayPanel
         rayPanel = new RayPanel(plane, this, user);
         rayPanel.setBounds(0, 0, getWidth(), getHeight()); // 设置 rayPanel 的边界
@@ -71,7 +75,7 @@ public class Main_play extends JFrame {
         layeredPane.add(plane, Integer.valueOf(5));
 
         // 创建并添加生命值标签
-        lifeLabel = new JLabel("生命:5");
+        lifeLabel = new JLabel("生命:"+plane.getLives());
         lifeLabel.setBounds(10, 10, 100, 20); // 设置标签的位置和大小
         lifeLabel.setFont(new Font("宋体", Font.PLAIN, 14));
         layeredPane.add(lifeLabel, Integer.valueOf(2));
@@ -110,7 +114,6 @@ public class Main_play extends JFrame {
                 }
             }
         });
-
         // 初始化 Timer，每秒增加一条射线
         addTime = a;
         timer = new Timer(10, e -> {
@@ -152,7 +155,7 @@ public class Main_play extends JFrame {
                 addGold();
                 goldTime = currentTime;
                 goldLabel.justDoIt(user, this);
-                System.out.println("现在的金币" + user.getGold());
+                System.out.println("当前金币" + user.getGold());
             }
         });
         timer.start();
@@ -237,7 +240,7 @@ public class Main_play extends JFrame {
 
     // 处理 ESC 键按下的方法
     private void onEscPressed() {
-        plane.setLives();
+        plane.setLives(-1);
         rayPanel.died();
     }
 }
